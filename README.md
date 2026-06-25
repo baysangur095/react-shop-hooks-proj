@@ -1,16 +1,42 @@
-# React + Vite
+# 🛒 Electronics Store — React SPA Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Современное одностраничное приложение (SPA) магазина электроники, разработанное на React с акцентом на оптимизацию производительности и управление глобальным состоянием без сторонних библиотек (Redux/Zustand).
 
-Currently, two official plugins are available:
+## 🚀 Функционал проекта
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* **Динамический каталог товаров:** Вывод списка продуктов из локальной базы данных с возможностью интерактивного взаимодействия.
+* **Умный поиск:** Мгновенная фильтрация товаров по названию в реальном времени.
+* **Полноценная корзина:** Возможность добавления товаров в корзину и удаления отдельных позиций поштучно.
+* **Касса в реальном времени:** Автоматический расчет общего количества товаров и итоговой суммы заказа в шапке сайта.
+* **Глобальная смена темы (Светлая / Тёмная):** Переключение цветового оформления сайта одной кнопкой с сохранением настроек интерфейса.
+* **Долгая память (Persistence):** Сохранение содержимого корзины в `localStorage` браузера — данные не пропадают после перезагрузки страницы (F5).
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Технологический стек и примененные хуки
 
-## Expanding the Oxlint configuration
+В проекте продемонстрированы ключевые концепции React и продвинутые инструменты оптимизации интерфейса:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1.  **`useState` (Реактивное состояние):** * Управление строкой поиска (`search`).
+    * Хранение массива ID выбранных товаров (`cards`) с использованием *ленивой инициализации* для оптимизации работы с памятью.
+2.  **`useContext` + Context API (Глобальное состояние):**
+    * Реализован собственный провайдер `ThemeProvider` и контекст `ThemeContext` для сквозной передачи темы оформления и функций её переключения без *Props Drilling*.
+3.  **`useEffect` (Синхронизация с побочными эффектами):**
+    * Автоматическое сохранение состояния корзины в `localStorage` при каждом её изменении (преобразование структуры данных в строку через `JSON.stringify`).
+4.  **`useMemo` (Мемоизация вычислений):**
+    * Оптимизация фильтрации продуктов по поисковому запросу.
+    * Мемоизация сложного расчета итоговой стоимости корзины через метод `.reduce()`. Расчет срабатывает *только* при изменении состава корзины.
+5.  **`useCallback` (Сохранение ссылочной целостности функций):**
+    * Кэширование функций добавления (`handleAddtocard`) и удаления (`handleRemoveFromCart`) товаров, чтобы предотвратить их пересоздание при каждом рендере родительского компонента.
+6.  **`React.memo` (Мемоизация компонентов высшего порядка):**
+    * Компонент карточки товара `ProductCard` обернут в `React.memo`. В связке с `useCallback` это полностью блокирует лишние перерендеры карточек при вводе текста в поисковую строку.
+
+---
+
+## 📦 Структура проекта
+
+```text
+src/
+├── components/
+│   └── ProductCard.jsx      # Компонент карточки товара (оптимизирован через React.memo)
+├── ThemeContext.jsx
